@@ -8,9 +8,11 @@ import requests
 #   - At least 1 base name is NEEDED. For multiple base names, separate them with a comma, e.g.
 #         "Animalia,Plantae"
 #   - max and min ma ages are optional
+#   - interval can be defined instead of max and min ages, such as "Cambrian" or "Cambrian,Permian";
+#     must NOT have max_ma or min_ma at the same time
 #   - enter the desired taxonomy level where co-occurrences are considered, say, "family", "genus"
 #   - enter your preferred output file prefix, for example, if you entered "RPI", then
-#       the output file name will be "RPI_Primates_by_family_from_XXXma_to_YYYma.csv" where XXX and YYY are the
+#       the output file name will be "RPI_by_family_from_XXXma_to_YYYma.csv" where XXX and YYY are the
 #       max and min ma ages for your convenience at your convenience. If you don't enter a prefix, it will just be
 #       "Primates_by_family_from_XXXma_to_YYYma.csv"
 #   - run the program by entering:
@@ -20,11 +22,11 @@ import requests
 #     then you can find the result file in the same folder!
 #
 # Now Enter custom variable values:
-list_or_matrix = "both"         # Required*** options: "list" | "matrix" | "both"
-base_name = "Animalia"          # Required***
+list_or_matrix = "matrix"         # Required*** options: "list" | "matrix" | "both"
+base_name = "Primates,Monotremata"          # Required***
 max_ma = ""                    # Optional
 min_ma = ""                    # Optional
-interval = "Cambrian"           # Optional, e.g. "Cambrian" or "Cambrian,Permian"; must NOT have max_ma or min_ma at the same time
+interval = ""           # Optional, e.g. "Cambrian" or "Cambrian,Permian"; must NOT have max_ma or min_ma at the same time
 level = "family"                # Required***
 output_file_prefix = ""     # Optional
 #
@@ -113,7 +115,7 @@ for occurrence in occurrences:
         continue
 
 print("Success!")
-print(occurrences_by_taxonomies)
+# print(occurrences_by_taxonomies)
 
 ########################################
 # Helper function
@@ -130,7 +132,8 @@ def count_common_elements(list1, list2):
 ############################################################################################
 # Formatting output file name (suffices "_list.csv" and/or "_matrix.csv" will be added later
 output_file = output_file_prefix + "_" * (len(output_file_prefix) > 0) \
-            + str(base_name) + "_by_" + str(level)
+            + str(base_name) * 0 + "_" * (len(base_name) > 0) * 0 \
+            + "by_" + str(level)
 
 if interval:
     if len(interval.split(",")) == 2:
@@ -179,7 +182,7 @@ if list_or_matrix == "list" or list_or_matrix == "both":
 
 #######################################################################
 # 3.2 Output Option: Matrix
-if list_or_matrix == "matrix" or "both":
+if list_or_matrix == "matrix" or list_or_matrix == "both":
     print("Adjacency matrix output option enabled.")
     print("    Calculating adjacency matrix (This might take a while) ... ", end="")
     adjacency_matrix = {}
